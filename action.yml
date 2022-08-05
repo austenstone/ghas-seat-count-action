@@ -1,15 +1,33 @@
-name: TypeScript Action
+name: GHAS Seat Count
 author: Austen Stone
-description: A TypeScript Action
+description: Count the remaining GitHub Advanced Security seats in your plan.
 branding:
-  icon: "plus"
-  color: "blue"
+  icon: "percent"
+  color: "green"
 
 inputs:
   github-token:
     description: The GitHub token used to create an authenticated client
     default: ${{ github.token }}
     required: false
+  org:
+    description: The org to use for the action
+    default: ${{ github.event.organization.login }}
+    required: false
+  enterprise:
+    description: The enterprise to use for the action
+    required: false
+  max_advanced_security_committers:
+    description: The maximum number of advanced security committers
+    required: false
+
+outputs:
+  total_advanced_security_committers:
+    description: The total number of seats
+  percentage:
+    description: The percentage of total seats used
+  remaining:
+    description: The number of remaining seats
 
 runs:
   using: "node16"
