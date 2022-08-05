@@ -2,6 +2,9 @@
 
 An [Action](https://docs.github.com/en/actions) to get the number of GHAS seats and optionally calculate the percentage used as well as the number of seats remaining.
 
+> **Warning**
+> Because the GitHub API does not return the maximum number of seats in your current plan you will need to specify this as an input to the action via the `max_advanced_security_committers` variable. If left unset the action will only return the total number of seats currently used.
+
 ## Usage
 Create a workflow (eg: `.github/workflows/seat-count.yml`). See [Creating a Workflow file](https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file).
 
@@ -43,6 +46,13 @@ jobs:
     steps:
       - run: echo More than 90% of seats used!
 ```
+
+To count the total seats in the enterprise instead of an org specify the enterprise input variable instead.
+```yml
+        with:
+          enterprise: github
+```
+
 ## Example Notification Actions
 Use this action in combination with other actions to notify users.
 - [slack-send](https://github.com/marketplace/actions/slack-send)
