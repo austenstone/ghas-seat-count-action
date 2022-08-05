@@ -1,4 +1,4 @@
-# Action
+# GHAS Seat Count Action
 
 An [Action](https://docs.github.com/en/actions) to get the number of GHAS seats and optionally calculate the percentage used as well as the number of seats remaining.
 
