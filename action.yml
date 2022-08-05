@@ -1,6 +1,6 @@
 name: GHAS Seat Count
 author: Austen Stone
-description: Count the remaining GitHub Advanced Security seats in your plan.
+description: Count the remaining GitHub Advanced Security seats in your GitHub plan.
 branding:
   icon: "percent"
   color: "green"
