@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: austenstone/ghas-seats-action@main
+      - uses: austenstone/ghas-seat-count-action@main
         id: seats
         with:
           org: octodemo
