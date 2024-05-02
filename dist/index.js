@@ -29270,7 +29270,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             maxAdvancedSecurityCommitters = null;
             purchasedAdvancedSecurityCommitters = input.maxAdvancedSecurityCommitters;
             if (!purchasedAdvancedSecurityCommitters) {
-                throw new Error('max_advanced_security_committers must be set in input if specifying an org');
+                throw new Error('max_advanced_security_committers must be set in input if not specifying an enterprise');
             }
         }
         else {
@@ -29293,6 +29293,19 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             const remaining = purchasedAdvancedSecurityCommitters - totalAdvancedSecurityCommitters;
             core.setOutput('remaining', remaining);
         }
+        const userMap = new Map();
+        advancedSecurityCommitters.data.repositories.forEach((repo) => {
+            repo.advanced_security_committers_breakdown.forEach((committer) => {
+                const existing = userMap.get(committer.user_login);
+                if (!existing || existing.last_pushed_date < committer.last_pushed_date) {
+                    userMap.set(committer.user_login, committer);
+                }
+            });
+        });
+        const sortedUsers = Array.from(userMap.values()).sort((a, b) => a.user_login.localeCompare(b.user_login));
+        const csvRows = sortedUsers.map(user => `${user.user_login},${user.last_pushed_date},${user.last_pushed_email}`);
+        const csvContent = "user_login,last_pushed_date,last_pushed_email\n" + csvRows.join("\n");
+        console.log(csvContent);
     }
     catch (error) {
         core.setFailed(error instanceof Error ? error.message : JSON.stringify(error));
