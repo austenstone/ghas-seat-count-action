@@ -34,6 +34,10 @@ const run = async (): Promise<void> => {
       // Purchased seats not available for orgs - Pull from input instead
       maxAdvancedSecurityCommitters = null;
       purchasedAdvancedSecurityCommitters = input.maxAdvancedSecurityCommitters;
+      // throw error if purchased seats are not provided
+      if (!purchasedAdvancedSecurityCommitters) {
+        throw new Error('max_advanced_security_committers must be set in input if specifying an org');
+      }
     } else {
       throw new Error('Either org or enterprise must be specified');
     }

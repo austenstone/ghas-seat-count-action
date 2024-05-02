@@ -29269,6 +29269,9 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             advancedSecurityCommitters = yield octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
             maxAdvancedSecurityCommitters = null;
             purchasedAdvancedSecurityCommitters = input.maxAdvancedSecurityCommitters;
+            if (!purchasedAdvancedSecurityCommitters) {
+                throw new Error('max_advanced_security_committers must be set in input if specifying an org');
+            }
         }
         else {
             throw new Error('Either org or enterprise must be specified');
