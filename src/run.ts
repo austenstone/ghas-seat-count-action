@@ -16,6 +16,12 @@ interface CommitterInfo {
   last_pushed_email: string;
 }
 
+interface SummaryDataItem {
+  date: string;
+  numberOfCommitters: number;
+  daysUntil90: number;
+}
+
 export function getInputs(): Input {
   const result = {} as Input;
   result.token = core.getInput('github-token');
@@ -112,24 +118,6 @@ const run = async (): Promise<void> => {
     writeFileSync('committer-last-pushed.csv', csvContent);
 
     // Calculate next Committers who will free a license at the 90 day mark
-
-    /*
-    const datesMap = new Map(); // To store date and a set of committers for that date
-    advancedSecurityCommitters.forEach((repo) => {
-      repo.advanced_security_committers_breakdown.forEach((committer) => {
-        const committersSet = datesMap.get(committer.last_pushed_date) || new Set();
-        committersSet.add(committer.user_login);
-        datesMap.set(committer.last_pushed_date, committersSet);
-      });
-    });
-    */
-
-    interface SummaryDataItem {
-      date: string;
-      numberOfCommitters: number;
-      daysUntil90: number;
-    }
-
     const datesMap = new Map<string, Set<string>>();
     userMap.forEach((committer, userLogin) => {
       const date = committer.last_pushed_date; // 'YYYY-MM-DD' format
