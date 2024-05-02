@@ -78,10 +78,12 @@ const run = async (): Promise<void> => {
     core.setOutput('purchased_advanced_security_committers', purchasedAdvancedSecurityCommitters);
     core.setOutput('total_advanced_security_committers', totalAdvancedSecurityCommitters);
 
+    let percentage;
+    let remaining;
     if (totalAdvancedSecurityCommitters && purchasedAdvancedSecurityCommitters) {
-      const percentage = Math.round(((totalAdvancedSecurityCommitters / purchasedAdvancedSecurityCommitters) * 100));
+      percentage = Math.round(((totalAdvancedSecurityCommitters / purchasedAdvancedSecurityCommitters) * 100));
       core.setOutput('percentage', percentage);
-      const remaining = purchasedAdvancedSecurityCommitters - totalAdvancedSecurityCommitters;
+      remaining = purchasedAdvancedSecurityCommitters - totalAdvancedSecurityCommitters;
       core.setOutput('remaining', remaining);
     }
 
@@ -89,7 +91,6 @@ const run = async (): Promise<void> => {
     // Parse and Aggregate Data
     const userMap = new Map<string, CommitterInfo>();
 
-    //advancedSecurityCommitters.data.repositories.forEach((repo) => {
     advancedSecurityCommitters.forEach((repo) => {  
       repo.advanced_security_committers_breakdown.forEach((committer) => {
         const existing = userMap.get(committer.user_login);
@@ -106,11 +107,52 @@ const run = async (): Promise<void> => {
 
     // Output the CSV file
     core.debug(`CSV Content:\n${csvContent}`)
-
     writeFileSync('committer-last-pushed.csv', csvContent);
 
-    // TODO 
-    // Summarize next 5 dates where users will return licenses... 
+    // Calculate next Committers who will free a license at the 90 day mark
+    let datesMap = new Map(); // To store date and a set of committers for that date
+    advancedSecurityCommitters.forEach((repo) => {
+      repo.advanced_security_committers_breakdown.forEach((committer) => {
+        let committersSet = datesMap.get(committer.last_pushed_date) || new Set();
+        committersSet.add(committer.user_login);
+        datesMap.set(committer.last_pushed_date, committersSet);
+      });
+    });
+
+    // Sort the dates and fine the oldest 10:
+ let sortedDates = Array.from(datesMap.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(0, 10);
+
+    // Calculate days until 90 for each date and prepare summary data
+    let today = new Date();
+    let summaryData = sortedDates.map(date => {
+      let committersSet = datesMap.get(date);
+      let dateObj = new Date(date);
+      let daysUntil90 = Math.ceil((dateObj.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 90;
+      return {
+        date,
+        numberOfCommitters: committersSet.size,
+        daysUntil90
+      };
+    });
+
+    // Output summary metrics to the workflow
+    core.summary
+    .addHeading('Summary')
+    .addTable([
+      ['Metric', 'Value'],
+      ['Total GHAS seats in use (Active Committers)', totalAdvancedSecurityCommitters],
+      ['Maximum if GHAS enabled everywhere', maxAdvancedSecurityCommitters],
+      ['GHAS Licenses Owned/Purchased', purchasedAdvancedSecurityCommitters],
+      ['Percentage of GHAS seats in use', `${percentage}%`],
+      ['Remaining GHAS seats', remaining],
+    ])
+    .addBreak()
+    .addHeading('Potential Committers to Free a License')
+    .addTable([
+      ['Date', 'CommitterCount', 'Days Until 90 Days'],
+      ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [date, numberOfCommitters, daysUntil90]),
+    ])
+    .write();
 
   } catch (error) {
     core.setFailed(error instanceof Error ? error.message : JSON.stringify(error))

@@ -29301,10 +29301,12 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         core.setOutput('maximum_advanced_security_committers', maxAdvancedSecurityCommitters);
         core.setOutput('purchased_advanced_security_committers', purchasedAdvancedSecurityCommitters);
         core.setOutput('total_advanced_security_committers', totalAdvancedSecurityCommitters);
+        let percentage;
+        let remaining;
         if (totalAdvancedSecurityCommitters && purchasedAdvancedSecurityCommitters) {
-            const percentage = Math.round(((totalAdvancedSecurityCommitters / purchasedAdvancedSecurityCommitters) * 100));
+            percentage = Math.round(((totalAdvancedSecurityCommitters / purchasedAdvancedSecurityCommitters) * 100));
             core.setOutput('percentage', percentage);
-            const remaining = purchasedAdvancedSecurityCommitters - totalAdvancedSecurityCommitters;
+            remaining = purchasedAdvancedSecurityCommitters - totalAdvancedSecurityCommitters;
             core.setOutput('remaining', remaining);
         }
         const userMap = new Map();
@@ -29321,6 +29323,43 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         const csvContent = "user_login,last_pushed_date,last_pushed_email\n" + csvRows.join("\n");
         core.debug(`CSV Content:\n${csvContent}`);
         (0, fs_1.writeFileSync)('committer-last-pushed.csv', csvContent);
+        let datesMap = new Map();
+        advancedSecurityCommitters.forEach((repo) => {
+            repo.advanced_security_committers_breakdown.forEach((committer) => {
+                let committersSet = datesMap.get(committer.last_pushed_date) || new Set();
+                committersSet.add(committer.user_login);
+                datesMap.set(committer.last_pushed_date, committersSet);
+            });
+        });
+        let sortedDates = Array.from(datesMap.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(0, 10);
+        let today = new Date();
+        let summaryData = sortedDates.map(date => {
+            let committersSet = datesMap.get(date);
+            let dateObj = new Date(date);
+            let daysUntil90 = Math.ceil((dateObj.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 90;
+            return {
+                date,
+                numberOfCommitters: committersSet.size,
+                daysUntil90
+            };
+        });
+        core.summary
+            .addHeading('Summary')
+            .addTable([
+            ['Metric', 'Value'],
+            ['Total GHAS seats in use (Active Committers)', totalAdvancedSecurityCommitters],
+            ['Maximum if GHAS enabled everywhere', maxAdvancedSecurityCommitters],
+            ['GHAS Licenses Owned/Purchased', purchasedAdvancedSecurityCommitters],
+            ['Percentage of GHAS seats in use', `${percentage}%`],
+            ['Remaining GHAS seats', remaining],
+        ])
+            .addBreak()
+            .addHeading('Potential Committers to Free a License')
+            .addTable([
+            ['Date', 'CommitterCount', 'Days Until 90 Days'],
+            ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [date, numberOfCommitters, daysUntil90]),
+        ])
+            .write();
     }
     catch (error) {
         core.setFailed(error instanceof Error ? error.message : JSON.stringify(error));
