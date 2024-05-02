@@ -31,5 +31,5 @@ outputs:
     description: The number of remaining seats
 
 runs:
-  using: "node18"
+  using: "node20"
   main: "dist/index.js"
