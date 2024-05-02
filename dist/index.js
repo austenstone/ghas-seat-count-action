@@ -29292,7 +29292,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         core.debug(`Purchased advanced security committers: ${purchasedAdvancedSecurityCommitters}`);
         core.debug(`Total advanced security committers: ${totalAdvancedSecurityCommitters}`);
         core.debug("\n\n\nCommitters Data:");
-        core.debug(JSON.stringify(advancedSecurityCommitters.data, null, 2));
+        core.debug(JSON.stringify(advancedSecurityCommitters, null, 2));
         core.debug("\n\n\nSummary Data:");
         core.debug(JSON.stringify(advancedSecurityCommittersSummary.data, null, 2));
         if (isNaN(totalAdvancedSecurityCommitters) || isNaN(purchasedAdvancedSecurityCommitters)) {

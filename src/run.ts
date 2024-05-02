@@ -67,7 +67,7 @@ const run = async (): Promise<void> => {
     core.debug(`Purchased advanced security committers: ${purchasedAdvancedSecurityCommitters}`);
     core.debug(`Total advanced security committers: ${totalAdvancedSecurityCommitters}`);
     core.debug("\n\n\nCommitters Data:");
-    core.debug(JSON.stringify(advancedSecurityCommitters.data, null, 2));
+    core.debug(JSON.stringify(advancedSecurityCommitters, null, 2));
     core.debug("\n\n\nSummary Data:");
     core.debug(JSON.stringify(advancedSecurityCommittersSummary.data, null, 2));
 
@@ -89,7 +89,8 @@ const run = async (): Promise<void> => {
     // Parse and Aggregate Data
     const userMap = new Map<string, CommitterInfo>();
 
-    advancedSecurityCommitters.data.repositories.forEach((repo) => {
+    //advancedSecurityCommitters.data.repositories.forEach((repo) => {
+    advancedSecurityCommitters.data.repositories.forEach((repo) => {  
       repo.advanced_security_committers_breakdown.forEach((committer) => {
         const existing = userMap.get(committer.user_login);
         if (!existing || existing.last_pushed_date < committer.last_pushed_date) {
