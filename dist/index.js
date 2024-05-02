@@ -29313,7 +29313,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         advancedSecurityCommitters.forEach((repo) => {
             repo.advanced_security_committers_breakdown.forEach((committer) => {
                 const existing = userMap.get(committer.user_login);
-                if (!existing || new Date(existing.last_pushed_date) > new Date(committer.last_pushed_date)) {
+                if (!existing || existing.last_pushed_date < committer.last_pushed_date) {
                     userMap.set(committer.user_login, committer);
                 }
             });
@@ -29324,17 +29324,20 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         core.debug(`CSV Content:\n${csvContent}`);
         (0, fs_1.writeFileSync)('committer-last-pushed.csv', csvContent);
         const datesMap = new Map();
-        advancedSecurityCommitters.forEach((repo) => {
-            repo.advanced_security_committers_breakdown.forEach((committer) => {
-                const committersSet = datesMap.get(committer.last_pushed_date) || new Set();
-                committersSet.add(committer.user_login);
-                datesMap.set(committer.last_pushed_date, committersSet);
-            });
+        userMap.forEach((committer, userLogin) => {
+            const date = committer.last_pushed_date;
+            if (!datesMap.has(date)) {
+                datesMap.set(date, new Set());
+            }
+            datesMap.get(date).add(userLogin);
         });
         const sortedDates = Array.from(datesMap.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(0, 10);
         const today = new Date();
         const summaryData = sortedDates.map(date => {
             const committersSet = datesMap.get(date);
+            if (!committersSet) {
+                return null;
+            }
             const dateObj = new Date(date);
             const daysUntil90 = Math.ceil((dateObj.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 90;
             return {
@@ -29342,7 +29345,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
                 numberOfCommitters: committersSet.size,
                 daysUntil90
             };
-        });
+        }).filter((item) => item !== null);
         core.summary
             .addHeading('Summary')
             .addTable([

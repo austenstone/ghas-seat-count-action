@@ -92,22 +92,11 @@ const run = async (): Promise<void> => {
     // Report last pushed date and email for each committer
     // Parse and Aggregate Data
     const userMap = new Map<string, CommitterInfo>();
-    /*
-    advancedSecurityCommitters.forEach((repo) => {  
-      repo.advanced_security_committers_breakdown.forEach((committer) => {
-        const existing = userMap.get(committer.user_login);
-        if (!existing || existing.last_pushed_date < committer.last_pushed_date) {
-          userMap.set(committer.user_login, committer);
-        }
-      });
-    });
-    */
 
     advancedSecurityCommitters.forEach((repo) => {  
       repo.advanced_security_committers_breakdown.forEach((committer) => {
         const existing = userMap.get(committer.user_login);
-        // Adjust the condition to check for the earliest date instead of the latest
-        if (!existing || new Date(existing.last_pushed_date) > new Date(committer.last_pushed_date)) {
+        if (!existing || existing.last_pushed_date < committer.last_pushed_date) {
           userMap.set(committer.user_login, committer);
         }
       });
@@ -123,6 +112,8 @@ const run = async (): Promise<void> => {
     writeFileSync('committer-last-pushed.csv', csvContent);
 
     // Calculate next Committers who will free a license at the 90 day mark
+
+    /*
     const datesMap = new Map(); // To store date and a set of committers for that date
     advancedSecurityCommitters.forEach((repo) => {
       repo.advanced_security_committers_breakdown.forEach((committer) => {
@@ -131,14 +122,34 @@ const run = async (): Promise<void> => {
         datesMap.set(committer.last_pushed_date, committersSet);
       });
     });
+    */
+
+    interface SummaryDataItem {
+      date: string;
+      numberOfCommitters: number;
+      daysUntil90: number;
+    }
+
+    const datesMap = new Map<string, Set<string>>();
+    userMap.forEach((committer, userLogin) => {
+      const date = committer.last_pushed_date; // 'YYYY-MM-DD' format
+      if (!datesMap.has(date)) {
+        datesMap.set(date, new Set<string>());
+      }
+      // Now, we can safely assert that datesMap.get(date) will not be undefined
+      datesMap.get(date)!.add(userLogin);
+    });
 
     // Sort the dates and fine the oldest 10:
     const sortedDates = Array.from(datesMap.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(0, 10);
 
     // Calculate days until 90 for each date and prepare summary data
     const today = new Date();
-    const summaryData = sortedDates.map(date => {
+    const summaryData: SummaryDataItem[] = sortedDates.map(date => {
       const committersSet = datesMap.get(date);
+      if (!committersSet) {
+        return null; 
+      }
       const dateObj = new Date(date);
       const daysUntil90 = Math.ceil((dateObj.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 90;
       return {
@@ -146,7 +157,7 @@ const run = async (): Promise<void> => {
         numberOfCommitters: committersSet.size,
         daysUntil90
       };
-    });
+    }).filter((item): item is SummaryDataItem => item !== null); // Type guard to filter out nulls;
 
     // Output summary metrics to the workflow
     core.summary
