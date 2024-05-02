@@ -29323,20 +29323,20 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         const csvContent = "user_login,last_pushed_date,last_pushed_email\n" + csvRows.join("\n");
         core.debug(`CSV Content:\n${csvContent}`);
         (0, fs_1.writeFileSync)('committer-last-pushed.csv', csvContent);
-        let datesMap = new Map();
+        const datesMap = new Map();
         advancedSecurityCommitters.forEach((repo) => {
             repo.advanced_security_committers_breakdown.forEach((committer) => {
-                let committersSet = datesMap.get(committer.last_pushed_date) || new Set();
+                const committersSet = datesMap.get(committer.last_pushed_date) || new Set();
                 committersSet.add(committer.user_login);
                 datesMap.set(committer.last_pushed_date, committersSet);
             });
         });
-        let sortedDates = Array.from(datesMap.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(0, 10);
-        let today = new Date();
-        let summaryData = sortedDates.map(date => {
-            let committersSet = datesMap.get(date);
-            let dateObj = new Date(date);
-            let daysUntil90 = Math.ceil((dateObj.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 90;
+        const sortedDates = Array.from(datesMap.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(0, 10);
+        const today = new Date();
+        const summaryData = sortedDates.map(date => {
+            const committersSet = datesMap.get(date);
+            const dateObj = new Date(date);
+            const daysUntil90 = Math.ceil((dateObj.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 90;
             return {
                 date,
                 numberOfCommitters: committersSet.size,

@@ -26,6 +26,7 @@ export function getInputs(): Input {
 }
 
 // Paginate with Octokit
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchAll(endpoint: string, octokit: any): Promise<any[]> {
   const options = octokit.request.endpoint.merge(endpoint, { per_page: 100 });
   const results = await octokit.paginate(options);
@@ -43,12 +44,13 @@ const run = async (): Promise<void> => {
     let advancedSecurityCommittersSummary;
     if (input.enterprise) {
       advancedSecurityCommittersSummary = await octokit.request(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       advancedSecurityCommitters = await fetchAll(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`, octokit);
       maxAdvancedSecurityCommitters = advancedSecurityCommittersSummary.data.maximum_advanced_security_committers;
       purchasedAdvancedSecurityCommitters = advancedSecurityCommittersSummary.data.purchased_advanced_security_committers;
     } else if (input.org) {
-      //advancedSecurityCommitters = await octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
       advancedSecurityCommittersSummary = await octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       advancedSecurityCommitters = await fetchAll(`GET /orgs/${input.org}/settings/billing/advanced-security`, octokit);
       // Purchased seats not available for orgs - Pull from input instead
       maxAdvancedSecurityCommitters = null;
@@ -110,24 +112,24 @@ const run = async (): Promise<void> => {
     writeFileSync('committer-last-pushed.csv', csvContent);
 
     // Calculate next Committers who will free a license at the 90 day mark
-    let datesMap = new Map(); // To store date and a set of committers for that date
+    const datesMap = new Map(); // To store date and a set of committers for that date
     advancedSecurityCommitters.forEach((repo) => {
       repo.advanced_security_committers_breakdown.forEach((committer) => {
-        let committersSet = datesMap.get(committer.last_pushed_date) || new Set();
+        const committersSet = datesMap.get(committer.last_pushed_date) || new Set();
         committersSet.add(committer.user_login);
         datesMap.set(committer.last_pushed_date, committersSet);
       });
     });
 
     // Sort the dates and fine the oldest 10:
- let sortedDates = Array.from(datesMap.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(0, 10);
+    const sortedDates = Array.from(datesMap.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(0, 10);
 
     // Calculate days until 90 for each date and prepare summary data
-    let today = new Date();
-    let summaryData = sortedDates.map(date => {
-      let committersSet = datesMap.get(date);
-      let dateObj = new Date(date);
-      let daysUntil90 = Math.ceil((dateObj.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 90;
+    const today = new Date();
+    const summaryData = sortedDates.map(date => {
+      const committersSet = datesMap.get(date);
+      const dateObj = new Date(date);
+      const daysUntil90 = Math.ceil((dateObj.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 90;
       return {
         date,
         numberOfCommitters: committersSet.size,
