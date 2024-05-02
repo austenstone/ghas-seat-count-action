@@ -29308,7 +29308,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             core.setOutput('remaining', remaining);
         }
         const userMap = new Map();
-        advancedSecurityCommitters.data.repositories.forEach((repo) => {
+        advancedSecurityCommitters.data.forEach((repo) => {
             repo.advanced_security_committers_breakdown.forEach((committer) => {
                 const existing = userMap.get(committer.user_login);
                 if (!existing || existing.last_pushed_date < committer.last_pushed_date) {
