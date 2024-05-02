@@ -90,7 +90,7 @@ const run = async (): Promise<void> => {
     const userMap = new Map<string, CommitterInfo>();
 
     //advancedSecurityCommitters.data.repositories.forEach((repo) => {
-    advancedSecurityCommitters.data.forEach((repo) => {  
+    advancedSecurityCommitters.forEach((repo) => {  
       repo.advanced_security_committers_breakdown.forEach((committer) => {
         const existing = userMap.get(committer.user_login);
         if (!existing || existing.last_pushed_date < committer.last_pushed_date) {
