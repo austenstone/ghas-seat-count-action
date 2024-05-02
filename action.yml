@@ -17,18 +17,19 @@ inputs:
   enterprise:
     description: The enterprise to use for the action
     required: false
-  max_advanced_security_committers:
-    description: The maximum number of advanced security committers
-    required: false
 
 outputs:
   total_advanced_security_committers:
     description: The total number of seats
+  maximum_advanced_security_committers:
+    description: The maximum seats if GHAS is turned on for all committers
+  purchased_advanced_security_committers:
+    description: The number of seats purchased
   percentage:
     description: The percentage of total seats used
   remaining:
     description: The number of remaining seats
 
 runs:
-  using: "node16"
+  using: "node18"
   main: "dist/index.js"
