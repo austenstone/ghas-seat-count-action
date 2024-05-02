@@ -40,14 +40,15 @@ const run = async (): Promise<void> => {
     let maxAdvancedSecurityCommitters;
     let purchasedAdvancedSecurityCommitters;
     let advancedSecurityCommitters;
+    let advancedSecurityCommittersSummary;
     if (input.enterprise) {
-      //advancedSecurityCommitters = await octokit.request(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`);
+      advancedSecurityCommittersSummary = await octokit.request(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`);
       advancedSecurityCommitters = await fetchAll(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`, octokit);
-      console.log(advancedSecurityCommitters)
-      maxAdvancedSecurityCommitters = advancedSecurityCommitters.data.maximum_advanced_security_committers;
-      purchasedAdvancedSecurityCommitters = advancedSecurityCommitters.data.purchased_advanced_security_committers;
+      maxAdvancedSecurityCommitters = advancedSecurityCommittersSummary.data.maximum_advanced_security_committers;
+      purchasedAdvancedSecurityCommitters = advancedSecurityCommittersSummary.data.purchased_advanced_security_committers;
     } else if (input.org) {
       //advancedSecurityCommitters = await octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
+      advancedSecurityCommittersSummary = await octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
       advancedSecurityCommitters = await fetchAll(`GET /orgs/${input.org}/settings/billing/advanced-security`, octokit);
       // Purchased seats not available for orgs - Pull from input instead
       maxAdvancedSecurityCommitters = null;

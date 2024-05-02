@@ -29268,13 +29268,15 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         let maxAdvancedSecurityCommitters;
         let purchasedAdvancedSecurityCommitters;
         let advancedSecurityCommitters;
+        let advancedSecurityCommittersSummary;
         if (input.enterprise) {
+            advancedSecurityCommittersSummary = yield octokit.request(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`);
             advancedSecurityCommitters = yield fetchAll(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`, octokit);
-            console.log(advancedSecurityCommitters);
-            maxAdvancedSecurityCommitters = advancedSecurityCommitters.data.maximum_advanced_security_committers;
-            purchasedAdvancedSecurityCommitters = advancedSecurityCommitters.data.purchased_advanced_security_committers;
+            maxAdvancedSecurityCommitters = advancedSecurityCommittersSummary.data.maximum_advanced_security_committers;
+            purchasedAdvancedSecurityCommitters = advancedSecurityCommittersSummary.data.purchased_advanced_security_committers;
         }
         else if (input.org) {
+            advancedSecurityCommittersSummary = yield octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
             advancedSecurityCommitters = yield fetchAll(`GET /orgs/${input.org}/settings/billing/advanced-security`, octokit);
             maxAdvancedSecurityCommitters = null;
             purchasedAdvancedSecurityCommitters = input.maxAdvancedSecurityCommitters;
