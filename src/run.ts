@@ -1,6 +1,8 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 
+import { writeFileSync } from 'fs';
+
 interface Input {
   token: string;
   org: string;
@@ -91,8 +93,10 @@ const run = async (): Promise<void> => {
     const csvRows = sortedUsers.map(user => `${user.user_login},${user.last_pushed_date},${user.last_pushed_email}`);
     const csvContent = "user_login,last_pushed_date,last_pushed_email\n" + csvRows.join("\n");
 
-    // Output // TODO - Change this to debug log...
-    console.log(csvContent);
+    // Output the CSV file
+    core.debug(`CSV Content:\n${csvContent}`)
+
+    writeFileSync('committer-last-pushed.csv', csvContent);
 
     // TODO 
     // Summarize next 5 dates where users will return licenses... 

@@ -29244,6 +29244,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getInputs = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
+const fs_1 = __nccwpck_require__(7147);
 function getInputs() {
     const result = {};
     result.token = core.getInput('github-token');
@@ -29305,7 +29306,8 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         const sortedUsers = Array.from(userMap.values()).sort((a, b) => a.user_login.localeCompare(b.user_login));
         const csvRows = sortedUsers.map(user => `${user.user_login},${user.last_pushed_date},${user.last_pushed_email}`);
         const csvContent = "user_login,last_pushed_date,last_pushed_email\n" + csvRows.join("\n");
-        console.log(csvContent);
+        core.debug(`CSV Content:\n${csvContent}`);
+        (0, fs_1.writeFileSync)('committer-last-pushed.csv', csvContent);
     }
     catch (error) {
         core.setFailed(error instanceof Error ? error.message : JSON.stringify(error));
