@@ -29313,7 +29313,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         advancedSecurityCommitters.forEach((repo) => {
             repo.advanced_security_committers_breakdown.forEach((committer) => {
                 const existing = userMap.get(committer.user_login);
-                if (!existing || existing.last_pushed_date < committer.last_pushed_date) {
+                if (!existing || new Date(existing.last_pushed_date) > new Date(committer.last_pushed_date)) {
                     userMap.set(committer.user_login, committer);
                 }
             });

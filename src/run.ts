@@ -92,11 +92,22 @@ const run = async (): Promise<void> => {
     // Report last pushed date and email for each committer
     // Parse and Aggregate Data
     const userMap = new Map<string, CommitterInfo>();
-
+    /*
     advancedSecurityCommitters.forEach((repo) => {  
       repo.advanced_security_committers_breakdown.forEach((committer) => {
         const existing = userMap.get(committer.user_login);
         if (!existing || existing.last_pushed_date < committer.last_pushed_date) {
+          userMap.set(committer.user_login, committer);
+        }
+      });
+    });
+    */
+
+    advancedSecurityCommitters.forEach((repo) => {  
+      repo.advanced_security_committers_breakdown.forEach((committer) => {
+        const existing = userMap.get(committer.user_login);
+        // Adjust the condition to check for the earliest date instead of the latest
+        if (!existing || new Date(existing.last_pushed_date) > new Date(committer.last_pushed_date)) {
           userMap.set(committer.user_login, committer);
         }
       });
