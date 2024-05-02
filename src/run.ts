@@ -140,16 +140,16 @@ const run = async (): Promise<void> => {
     .addHeading('Summary')
     .addTable([
       ['Metric', 'Value'],
-      ['Total GHAS seats in use (Active Committers)', totalAdvancedSecurityCommitters],
-      ['Maximum if GHAS enabled everywhere', maxAdvancedSecurityCommitters],
-      ['GHAS Licenses Owned/Purchased', purchasedAdvancedSecurityCommitters],
+      ['Total GHAS seats in use (Active Committers)', `${totalAdvancedSecurityCommitters}`],
+      ['Maximum if GHAS enabled everywhere', `${maxAdvancedSecurityCommitters}`],
+      ['GHAS Licenses Owned/Purchased', `${purchasedAdvancedSecurityCommitters}`],
       ['Percentage of GHAS seats in use', `${percentage}%`],
-      ['Remaining GHAS seats', remaining],
+      ['Remaining GHAS seats', `${remaining}`],
     ])
     .addBreak()
     .addHeading('Potential Committers to Free a License')
     .addTable([
-      ['Date', 'CommitterCount', 'Days Until 90 Days'],
+      ['Date', 'Committer Count', 'Days Until 90 Days'],
       ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [date, numberOfCommitters, daysUntil90]),
     ])
     .write();
