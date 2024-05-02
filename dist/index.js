@@ -29355,7 +29355,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             .addBreak()
             .addHeading('Potential Committers to Free a License')
             .addTable([
-            ['**Date**', '**Committer Count**', '**Days Until 90 Days**'],
+            ['Date', 'Committer Count', 'Days Until 90 Days'],
             ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [
                 `${date}`,
                 `${numberOfCommitters}`,

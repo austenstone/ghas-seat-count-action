@@ -148,7 +148,7 @@ const run = async (): Promise<void> => {
     .addBreak()
     .addHeading('Potential Committers to Free a License')
     .addTable([
-      ['**Date**', '**Committer Count**', '**Days Until 90 Days**'],
+      ['Date', 'Committer Count', 'Days Until 90 Days'],
       ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [
         `${date}`, // Assuming date is already a string, but this ensures consistency
         `${numberOfCommitters}`, // Convert number to string
