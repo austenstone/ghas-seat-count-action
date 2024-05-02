@@ -139,7 +139,6 @@ const run = async (): Promise<void> => {
     core.summary
     .addHeading('Summary')
     .addTable([
-      ['Metric', 'Value'],
       ['Total GHAS seats in use', `${totalAdvancedSecurityCommitters}`],
       ['Maximum if GHAS enabled everywhere', `${maxAdvancedSecurityCommitters}`],
       ['GHAS Licenses Owned/Purchased', `${purchasedAdvancedSecurityCommitters}`],
@@ -149,8 +148,7 @@ const run = async (): Promise<void> => {
     .addBreak()
     .addHeading('Potential Committers to Free a License')
     .addTable([
-      ['Date', 'Committer Count', 'Days Until 90 Days'],
-      //...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [date, numberOfCommitters, daysUntil90]),
+      ['**Date**', '**Committer Count**', '**Days Until 90 Days**'],
       ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [
         `${date}`, // Assuming date is already a string, but this ensures consistency
         `${numberOfCommitters}`, // Convert number to string
