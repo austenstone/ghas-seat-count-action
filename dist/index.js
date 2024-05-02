@@ -29269,6 +29269,10 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         const maxAdvancedSecurityCommitters = advancedSecurityCommitters.data.maximum_advanced_security_committers;
         const purchasedAdvancedSecurityCommitters = advancedSecurityCommitters.data.purchased_advanced_security_committers;
         const totalAdvancedSecurityCommitters = advancedSecurityCommitters.data.total_advanced_security_committers;
+        core.debug(`Maximum advanced security committers: ${maxAdvancedSecurityCommitters}`);
+        core.debug(`Purchased advanced security committers: ${purchasedAdvancedSecurityCommitters}`);
+        core.debug(`Total advanced security committers: ${totalAdvancedSecurityCommitters}`);
+        core.debug(JSON.stringify(advancedSecurityCommitters.data, null, 2));
         if (isNaN(totalAdvancedSecurityCommitters) || isNaN(maxAdvancedSecurityCommitters) || isNaN(purchasedAdvancedSecurityCommitters)) {
             throw new Error('Invalid number of advanced security committers');
         }
