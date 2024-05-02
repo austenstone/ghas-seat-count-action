@@ -140,7 +140,7 @@ const run = async (): Promise<void> => {
     .addHeading('Summary')
     .addTable([
       ['Metric', 'Value'],
-      ['Total GHAS seats in use (Active Committers)', `${totalAdvancedSecurityCommitters}`],
+      ['Total GHAS seats in use', `${totalAdvancedSecurityCommitters}`],
       ['Maximum if GHAS enabled everywhere', `${maxAdvancedSecurityCommitters}`],
       ['GHAS Licenses Owned/Purchased', `${purchasedAdvancedSecurityCommitters}`],
       ['Percentage of GHAS seats in use', `${percentage}%`],
@@ -150,7 +150,12 @@ const run = async (): Promise<void> => {
     .addHeading('Potential Committers to Free a License')
     .addTable([
       ['Date', 'Committer Count', 'Days Until 90 Days'],
-      ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [date, numberOfCommitters, daysUntil90]),
+      //...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [date, numberOfCommitters, daysUntil90]),
+      ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [
+        `${date}`, // Assuming date is already a string, but this ensures consistency
+        `${numberOfCommitters}`, // Convert number to string
+        `${daysUntil90}` // Convert number to string
+      ]),
     ])
     .write();
 

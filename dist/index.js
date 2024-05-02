@@ -29347,7 +29347,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             .addHeading('Summary')
             .addTable([
             ['Metric', 'Value'],
-            ['Total GHAS seats in use (Active Committers)', `${totalAdvancedSecurityCommitters}`],
+            ['Total GHAS seats in use', `${totalAdvancedSecurityCommitters}`],
             ['Maximum if GHAS enabled everywhere', `${maxAdvancedSecurityCommitters}`],
             ['GHAS Licenses Owned/Purchased', `${purchasedAdvancedSecurityCommitters}`],
             ['Percentage of GHAS seats in use', `${percentage}%`],
@@ -29357,7 +29357,11 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             .addHeading('Potential Committers to Free a License')
             .addTable([
             ['Date', 'Committer Count', 'Days Until 90 Days'],
-            ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [date, numberOfCommitters, daysUntil90]),
+            ...summaryData.map(({ date, numberOfCommitters, daysUntil90 }) => [
+                `${date}`,
+                `${numberOfCommitters}`,
+                `${daysUntil90}`
+            ]),
         ])
             .write();
     }
