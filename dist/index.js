@@ -29287,11 +29287,14 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         else {
             throw new Error('Either org or enterprise must be specified');
         }
-        const totalAdvancedSecurityCommitters = advancedSecurityCommitters.data.total_advanced_security_committers;
+        const totalAdvancedSecurityCommitters = advancedSecurityCommittersSummary.data.total_advanced_security_committers;
         core.debug(`Maximum advanced security committers: ${maxAdvancedSecurityCommitters}`);
         core.debug(`Purchased advanced security committers: ${purchasedAdvancedSecurityCommitters}`);
         core.debug(`Total advanced security committers: ${totalAdvancedSecurityCommitters}`);
+        core.debug("\n\n\nCommitters Data:");
         core.debug(JSON.stringify(advancedSecurityCommitters.data, null, 2));
+        core.debug("\n\n\nSummary Data:");
+        core.debug(JSON.stringify(advancedSecurityCommittersSummary.data, null, 2));
         if (isNaN(totalAdvancedSecurityCommitters) || isNaN(purchasedAdvancedSecurityCommitters)) {
             throw new Error('Invalid number of advanced security committers');
         }
