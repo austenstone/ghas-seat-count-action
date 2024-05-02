@@ -29249,6 +29249,7 @@ function getInputs() {
     result.token = core.getInput('github-token');
     result.org = core.getInput('org');
     result.enterprise = core.getInput('enterprise');
+    result.maxAdvancedSecurityCommitters = parseInt(core.getInput('max_advanced_security_committers'));
     return result;
 }
 exports.getInputs = getInputs;
@@ -29256,24 +29257,28 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const input = getInputs();
         const octokit = github.getOctokit(input.token);
+        let maxAdvancedSecurityCommitters;
+        let purchasedAdvancedSecurityCommitters;
         let advancedSecurityCommitters;
-        if (input.org) {
-            advancedSecurityCommitters = yield octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
-        }
-        else if (input.enterprise) {
+        if (input.enterprise) {
             advancedSecurityCommitters = yield octokit.request(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`);
+            maxAdvancedSecurityCommitters = advancedSecurityCommitters.data.maximum_advanced_security_committers;
+            purchasedAdvancedSecurityCommitters = advancedSecurityCommitters.data.purchased_advanced_security_committers;
+        }
+        else if (input.org) {
+            advancedSecurityCommitters = yield octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
+            maxAdvancedSecurityCommitters = null;
+            purchasedAdvancedSecurityCommitters = input.maxAdvancedSecurityCommitters;
         }
         else {
             throw new Error('Either org or enterprise must be specified');
         }
-        const maxAdvancedSecurityCommitters = advancedSecurityCommitters.data.maximum_advanced_security_committers;
-        const purchasedAdvancedSecurityCommitters = advancedSecurityCommitters.data.purchased_advanced_security_committers;
         const totalAdvancedSecurityCommitters = advancedSecurityCommitters.data.total_advanced_security_committers;
         core.debug(`Maximum advanced security committers: ${maxAdvancedSecurityCommitters}`);
         core.debug(`Purchased advanced security committers: ${purchasedAdvancedSecurityCommitters}`);
         core.debug(`Total advanced security committers: ${totalAdvancedSecurityCommitters}`);
         core.debug(JSON.stringify(advancedSecurityCommitters.data, null, 2));
-        if (isNaN(totalAdvancedSecurityCommitters) || isNaN(maxAdvancedSecurityCommitters) || isNaN(purchasedAdvancedSecurityCommitters)) {
+        if (isNaN(totalAdvancedSecurityCommitters) || isNaN(purchasedAdvancedSecurityCommitters)) {
             throw new Error('Invalid number of advanced security committers');
         }
         core.setOutput('maximum_advanced_security_committers', maxAdvancedSecurityCommitters);

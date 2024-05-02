@@ -15,7 +15,10 @@ inputs:
     default: ${{ github.event.organization.login }}
     required: false
   enterprise:
-    description: The enterprise to use for the action
+    description: The enterprise to use for the action (overrides org)
+    required: false
+  max_advanced_security_committers:
+    description: The maximum number of advanced security committers.  Only needed for org
     required: false
 
 outputs:
