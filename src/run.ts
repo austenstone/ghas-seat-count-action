@@ -16,10 +16,6 @@ interface CommitterInfo {
   last_pushed_email: string;
 }
 
-//interface AdvancedSecurityCommittersData {
-//  advanced_security_committers_breakdown: CommitterInfo[];
-//}
-
 export function getInputs(): Input {
   const result = {} as Input;
   result.token = core.getInput('github-token');
@@ -27,6 +23,13 @@ export function getInputs(): Input {
   result.enterprise = core.getInput('enterprise');
   result.maxAdvancedSecurityCommitters = parseInt(core.getInput('max_advanced_security_committers'));
   return result;
+}
+
+// Paginate with Octokit
+async function fetchAll(endpoint: string, octokit: any): Promise<any[]> {
+  const options = octokit.request.endpoint.merge(endpoint, { per_page: 100 });
+  const results = await octokit.paginate(options);
+  return results;
 }
 
 const run = async (): Promise<void> => {
@@ -38,11 +41,13 @@ const run = async (): Promise<void> => {
     let purchasedAdvancedSecurityCommitters;
     let advancedSecurityCommitters;
     if (input.enterprise) {
-      advancedSecurityCommitters = await octokit.request(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`);
+      //advancedSecurityCommitters = await octokit.request(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`);
+      advancedSecurityCommitters = await fetchAll(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`, octokit);
       maxAdvancedSecurityCommitters = advancedSecurityCommitters.data.maximum_advanced_security_committers;
       purchasedAdvancedSecurityCommitters = advancedSecurityCommitters.data.purchased_advanced_security_committers;
     } else if (input.org) {
-      advancedSecurityCommitters = await octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
+      //advancedSecurityCommitters = await octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
+      advancedSecurityCommitters = await fetchAll(`GET /orgs/${input.org}/settings/billing/advanced-security`, octokit);
       // Purchased seats not available for orgs - Pull from input instead
       maxAdvancedSecurityCommitters = null;
       purchasedAdvancedSecurityCommitters = input.maxAdvancedSecurityCommitters;

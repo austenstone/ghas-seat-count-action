@@ -29254,6 +29254,13 @@ function getInputs() {
     return result;
 }
 exports.getInputs = getInputs;
+function fetchAll(endpoint, octokit) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const options = octokit.request.endpoint.merge(endpoint, { per_page: 100 });
+        const results = yield octokit.paginate(options);
+        return results;
+    });
+}
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const input = getInputs();
@@ -29262,12 +29269,12 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         let purchasedAdvancedSecurityCommitters;
         let advancedSecurityCommitters;
         if (input.enterprise) {
-            advancedSecurityCommitters = yield octokit.request(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`);
+            advancedSecurityCommitters = yield fetchAll(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`, octokit);
             maxAdvancedSecurityCommitters = advancedSecurityCommitters.data.maximum_advanced_security_committers;
             purchasedAdvancedSecurityCommitters = advancedSecurityCommitters.data.purchased_advanced_security_committers;
         }
         else if (input.org) {
-            advancedSecurityCommitters = yield octokit.request(`GET /orgs/${input.org}/settings/billing/advanced-security`);
+            advancedSecurityCommitters = yield fetchAll(`GET /orgs/${input.org}/settings/billing/advanced-security`, octokit);
             maxAdvancedSecurityCommitters = null;
             purchasedAdvancedSecurityCommitters = input.maxAdvancedSecurityCommitters;
             if (!purchasedAdvancedSecurityCommitters) {
