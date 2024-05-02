@@ -43,6 +43,7 @@ const run = async (): Promise<void> => {
     if (input.enterprise) {
       //advancedSecurityCommitters = await octokit.request(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`);
       advancedSecurityCommitters = await fetchAll(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`, octokit);
+      console.log(advancedSecurityCommitters)
       maxAdvancedSecurityCommitters = advancedSecurityCommitters.data.maximum_advanced_security_committers;
       purchasedAdvancedSecurityCommitters = advancedSecurityCommitters.data.purchased_advanced_security_committers;
     } else if (input.org) {

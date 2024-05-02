@@ -29270,6 +29270,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         let advancedSecurityCommitters;
         if (input.enterprise) {
             advancedSecurityCommitters = yield fetchAll(`GET /enterprises/${input.enterprise}/settings/billing/advanced-security`, octokit);
+            console.log(advancedSecurityCommitters);
             maxAdvancedSecurityCommitters = advancedSecurityCommitters.data.maximum_advanced_security_committers;
             purchasedAdvancedSecurityCommitters = advancedSecurityCommitters.data.purchased_advanced_security_committers;
         }
