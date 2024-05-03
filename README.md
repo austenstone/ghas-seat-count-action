@@ -64,7 +64,7 @@ To save a CSV with the latest push date for each user you can upload as an artif
 ```yml
     steps:
       - uses: actions/checkout@v4
-      - uses: jonjozwiak/ghas-seat-count-action@add_reporting
+      - uses: austenstone/ghas-seat-count-action@v2
         ...
       - uses: actions/upload-artifact@v4
         with:
