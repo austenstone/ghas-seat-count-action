@@ -15,9 +15,9 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node: [ '12', '14', '16' ]
+        node: [ '20' ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node.js ${{ matrix.node }}
         uses: actions/setup-node@v2
         with:

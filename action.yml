@@ -15,20 +15,24 @@ inputs:
     default: ${{ github.event.organization.login }}
     required: false
   enterprise:
-    description: The enterprise to use for the action
+    description: The enterprise to use for the action (overrides org)
     required: false
   max_advanced_security_committers:
-    description: The maximum number of advanced security committers
+    description: The maximum number of advanced security committers.  Only needed for org
     required: false
 
 outputs:
   total_advanced_security_committers:
     description: The total number of seats
+  maximum_advanced_security_committers:
+    description: The maximum seats if GHAS is turned on for all committers
+  purchased_advanced_security_committers:
+    description: The number of seats purchased
   percentage:
     description: The percentage of total seats used
   remaining:
     description: The number of remaining seats
 
 runs:
-  using: "node16"
+  using: "node20"
   main: "dist/index.js"
